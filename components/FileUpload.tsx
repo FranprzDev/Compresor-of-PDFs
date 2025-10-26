@@ -1,17 +1,30 @@
-
 import React, { useState, useCallback, useRef } from 'react';
+import { useFormStatus } from 'react-dom';
 import { formatBytes } from '../utils/helpers';
 import { UploadIcon, PdfIcon, CloseIcon } from './Icons';
 
 interface FileUploadProps {
   file: File | null;
   onFileSelect: (file: File) => void;
-  onCompress: () => void;
   error: string | null;
   clearError: () => void;
 }
 
-export const FileUpload: React.FC<FileUploadProps> = ({ file, onFileSelect, onCompress, error, clearError }) => {
+const SubmitButton = () => {
+    const { pending } = useFormStatus();
+  
+    return (
+      <button
+        type="submit"
+        disabled={pending}
+        className="w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-800 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:bg-indigo-400 disabled:cursor-not-allowed disabled:scale-100"
+      >
+        {pending ? 'Compressing...' : 'Compress PDF'}
+      </button>
+    );
+};
+
+export const FileUpload: React.FC<FileUploadProps> = ({ file, onFileSelect, error, clearError }) => {
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -73,9 +86,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({ file, onFileSelect, onCo
             <input
                 ref={inputRef}
                 type="file"
+                name="pdf"
                 accept=".pdf"
                 onChange={handleFileChange}
                 className="hidden"
+                required
             />
             <div className="flex flex-col items-center justify-center space-y-4 text-slate-500 dark:text-slate-400">
                 <UploadIcon className="w-12 h-12" />
@@ -97,19 +112,16 @@ export const FileUpload: React.FC<FileUploadProps> = ({ file, onFileSelect, onCo
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">{formatBytes(file.size)}</p>
                 </div>
+                 {/* This hidden input ensures the file is part of the form submission */}
+                 <input type="file" name="pdf" ref={inputRef} className="hidden" />
             </div>
-          <button
-            onClick={onCompress}
-            className="w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-800 transition-all duration-300 ease-in-out transform hover:scale-105"
-          >
-            Compress PDF
-          </button>
+          <SubmitButton />
         </div>
       )}
       {error && (
          <div className="mt-4 bg-red-100 dark:bg-red-900/30 border border-red-400 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg relative flex items-center justify-between" role="alert">
             <span className="block sm:inline">{error}</span>
-            <button onClick={clearError} className="p-1 rounded-full hover:bg-red-200 dark:hover:bg-red-900/50">
+            <button type="button" onClick={clearError} className="p-1 rounded-full hover:bg-red-200 dark:hover:bg-red-900/50">
                 <CloseIcon className="w-4 h-4" />
             </button>
         </div>

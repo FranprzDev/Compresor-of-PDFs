@@ -1,16 +1,16 @@
-
 import React, { useMemo } from 'react';
 import { formatBytes } from '../utils/helpers';
 import { CheckCircleIcon, DownloadIcon, RefreshIcon, PdfIcon } from './Icons';
 
 interface DownloadViewProps {
-  file: File;
+  fileName: string;
   originalSize: number;
   compressedSize: number;
+  compressedFileBase64: string;
   onReset: () => void;
 }
 
-export const DownloadView: React.FC<DownloadViewProps> = ({ file, originalSize, compressedSize, onReset }) => {
+export const DownloadView: React.FC<DownloadViewProps> = ({ fileName, originalSize, compressedSize, compressedFileBase64, onReset }) => {
   
   const reductionPercentage = useMemo(() => {
     if (originalSize === 0) return 0;
@@ -18,10 +18,18 @@ export const DownloadView: React.FC<DownloadViewProps> = ({ file, originalSize, 
   }, [originalSize, compressedSize]);
 
   const handleDownload = () => {
-    const url = URL.createObjectURL(file);
+    const byteCharacters = atob(compressedFileBase64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const fileNameParts = file.name.split('.');
+    const fileNameParts = fileName.split('.');
     const extension = fileNameParts.pop();
     const name = fileNameParts.join('.');
     a.download = `${name}-compressed.${extension}`;
@@ -42,8 +50,8 @@ export const DownloadView: React.FC<DownloadViewProps> = ({ file, originalSize, 
       <div className="w-full bg-slate-100 dark:bg-slate-700/50 rounded-lg p-4 flex items-center space-x-4 mb-6">
         <PdfIcon className="w-12 h-12 text-red-500 flex-shrink-0" />
         <div className="flex-grow overflow-hidden text-left">
-            <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate" title={file.name}>
-                {file.name}
+            <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate" title={fileName}>
+                {fileName}
             </p>
             <div className="flex items-baseline space-x-2">
                 <span className="text-xs text-slate-500 dark:text-slate-400 line-through">{formatBytes(originalSize)}</span>
