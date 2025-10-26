@@ -14,8 +14,7 @@ export const UploadIcon: React.FC<IconProps> = ({ className }) => (
 
 export const PdfIcon: React.FC<IconProps> = ({ className }) => (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM9.5 16.5v-9l7 4.5-7 4.5z" opacity=".3"/>
-        <path fillRule="evenodd" clipRule="evenodd" d="M4 4C4 3.44772 4.44772 3 5 3H14L19 8V19C19 19.5523 18.5523 20 18 20H5C4.44772 20 4 19.5523 4 19V4ZM13 4.41421V8H17.5858L13 4.41421Z" />
+        <path d="M6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z" />
     </svg>
 );
 

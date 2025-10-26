@@ -30,15 +30,13 @@ const App: React.FC = () => {
 
     setView('PROCESSING');
 
-    // Simulate PDF compression
     setTimeout(() => {
-      // Simulate a compression ratio between 60% and 85%
       const reductionFactor = 1 - (Math.random() * 0.25 + 0.60);
       const newSize = Math.round(originalSize * reductionFactor);
       
       setCompressedSize(newSize);
       setView('DOWNLOAD');
-    }, 4000); // Simulate a 4-second processing time
+    }, 4000);
   }, [file, originalSize]);
 
   const handleReset = useCallback(() => {
